@@ -1,8 +1,8 @@
 import './css/styles.css';
 var debounce = require('lodash.debounce');
 //console.log(debounce);
-import countryItemTemplate from './templates/country-templates';
-console.log(countryItemTemplate);
+import countryTemplates from './templates/country-templates';
+console.log(countryTemplates);
 
 const DEBOUNCE_DELAY = 300;
 
@@ -17,18 +17,16 @@ class CountriesApiService {
         this.searchQuery = '';
     }
 
-
     fetchCountries() {
-        const searchFilter = '?fields=name,name.official,capital,population,flags.svg,languages';
+        const searchFilter = '?fields=name,name.official,capital,population,flags,languages';
         const url = `https://restcountries.com/v3.1/name/${this.searchQuery}${searchFilter}`;
 
-
-        fetch(url)
+        return fetch(url)
             .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                renderMarkup(data);
-            })
+            .then(name => {
+                console.log(name);
+                return name;
+            });
     }
 
     get query() {
@@ -51,20 +49,36 @@ function onSearch(e) {
     console.log(e.target.value);
     ///console.log(e);
 
-    countriesApiService.query = e.target.value;
+    countriesApiService.query = e.target.value.trim();
+    //console.log(countriesApiService);
+    ///countriesApiService.fetchCountries();
 
-    countriesApiService.fetchCountries();
+
+    countriesApiService.fetchCountries().then(name => {
+        console.log(name.length);
+        if (name.length === 1) {
+            renderMarkup(name);
+        }
+    });
 }
 
 
-function renderMarkup(data) {
-    const list = (data) => countryItemTemplate({
+function renderMarkup(name) {
+    //console.log(data);
+    const list = name.map(({
         name: { official },
         capital,
         population,
         flags: { svg },
         languages,
-    });
+    }) => countryTemplates({
+        name: { official },
+        capital,
+        population,
+        flags: { svg },
+        languages,
+    }))
+        .join('');;
 
     refs.countryList.insertAdjacentHTML('beforeend', list);
 }
