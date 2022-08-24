@@ -1,6 +1,8 @@
 import './css/styles.css';
 var debounce = require('lodash.debounce');
-//console.log(debounce);
+
+import Notiflix from 'notiflix';
+
 import countryTemplates from './templates/country-templates';
 console.log(countryTemplates);
 
@@ -9,6 +11,7 @@ const DEBOUNCE_DELAY = 300;
 const refs = {
     searchInput: document.querySelector('#search-box'),
     countryList: document.querySelector('.country-list'),
+    countryInfo: document.querySelector('.country-info'),
 }
 
 
@@ -26,6 +29,10 @@ class CountriesApiService {
             .then(name => {
                 console.log(name);
                 return name;
+            }).then((result) => {
+                throw new Error("Ошибка!");
+            }).catch(error => {
+                console.log(error);
             });
     }
 
@@ -52,20 +59,41 @@ function onSearch(e) {
     countriesApiService.query = e.target.value.trim();
     //console.log(countriesApiService);
     ///countriesApiService.fetchCountries();
-
+    refs.countryInfo.innerHTML = '';
+    refs.countryList.innerHTML = '';
 
     countriesApiService.fetchCountries().then(name => {
         console.log(name.length);
         if (name.length === 1) {
-            renderMarkup(name);
+            renderCountryInfoMarkup(name);
+        } else if (name.length >= 2 && name.length <= 10) {
+            renderCountryListMarkup(name);
+        } else {
+            Notiflix.Notify.info('Too many matches found. Please enter a more specific name.');
         }
+    }).catch(error => {
+        console.log(error);
     });
 }
 
+function renderCountryListMarkup(name) {
+    console.log(name);
+    const listEl = name.map(({
+        name: { official },
+        flags: { svg },
+    }) => murckupForCountryList({
+        name: { official },
+        flags: { svg },
+    }))
+        .join('');
 
-function renderMarkup(name) {
+
+    refs.countryList.insertAdjacentHTML('beforeend', listEl);
+}
+
+function renderCountryInfoMarkup(name) {
     //console.log(data);
-    const list = name.map(({
+    const countryEl = name.map(({
         name: { official },
         capital,
         population,
@@ -78,8 +106,17 @@ function renderMarkup(name) {
         flags: { svg },
         languages,
     }))
-        .join('');;
+        .join('');
 
-    refs.countryList.insertAdjacentHTML('beforeend', list);
+    refs.countryInfo.insertAdjacentHTML('beforeend', countryEl);
 }
 
+function murckupForCountryList({
+    name: { official },
+    flags: { svg },
+}) {
+    return `<li class="country-list__item">
+             <img src="${svg}" alt="flag" width="30" height="30" class="country-list__img" />
+             <span class="country-list__name">${official}</span>
+            </li>`;
+}
