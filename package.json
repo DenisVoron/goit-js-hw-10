@@ -9,10 +9,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/DenisVoron/goit-js-hw-10.git"
+    "url": "git+https://https://github.com/DenisVoron/goit-js-hw-10.git"
   },
   "keywords": [],
-  "author": "Denis Voronko <denis.voronko@gmail.com>",
+  "author": "Alexander Repeta <alexander.repeta@gmail.com>",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/goitacademy/parcel-project-template/issues"
