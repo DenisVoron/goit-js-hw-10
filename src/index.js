@@ -16,7 +16,7 @@ const refs = {
     countryInfo: document.querySelector('.country-info'),
 }
 
-const countriesApiService = new CountriesApiService(arguments);
+const countriesApiService = new CountriesApiService();
 
 console.log(countriesApiService);
 
