@@ -18,6 +18,8 @@ const refs = {
 
 const countriesApiService = new CountriesApiService(arguments);
 
+console.log(countriesApiService);
+
 refs.searchInput.addEventListener('input', debounce(onSearch, DEBOUNCE_DELAY));
 
 function onSearch(e) {
